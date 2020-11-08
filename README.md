@@ -36,9 +36,9 @@ bandwidth consumption and convergence latency?**
 > Internet-wide blockchain system, nodes are deployed across several ISPs. The
 > ISPs' maximum available bandwidth differs by area and connection type. For
 > example, Comcast may offer connection speeds up to 50Mbps in some areas,
-> whereas DSL services may offer a 20Mbps connection speed in another [new 2].
+> whereas DSL services may offer a 20Mbps connection speed in another [new 1].
 > To simulate commodity network links, we capped the bandwidth for each blockchain
-> node to 20-30 Mbps, which is the same as Algorand [new 3]. Second, only
+> node to 20-30 Mbps, which is the same as Algorand [new 2]. Second, only
 > increasing the nodes' bandwidth cannot significantly improve the SLA
 > satisfaction rate. As shown in **Figure 2** below, we increase the bandwidth
 > of all nodes to 100Mbps, the Ethereum-clique blockchain with five baseline P2P
@@ -86,6 +86,5 @@ the next SLA transaction after all previous transactions have been committed?
 <!-- 4. How about only use transactions' timestamp rather than remaining deadline during multicast? -->
 
 # References
-[new 1] A Cost Analysis of Internet of Things Sensor Data Storage on Blockchain via Smart Contracts, Electronics '20.  
-[new 2] https://tinyurl.com/yd8fsfb6  
-[new 3] Algorand: Scaling Byzantine Agreements for Cryptocurrencies, SOSP '17.
+[new 1] https://tinyurl.com/yd8fsfb6  
+[new 2] Algorand: Scaling Byzantine Agreements for Cryptocurrencies, SOSP '17.
