@@ -1,8 +1,6 @@
 # Table of Contents
 - [Q&A](#qa)
 - [References](#references)
-  * [New References](#new-references)
-  * [References in Paper](#references-in-paper)
 
 # Q&A
 
