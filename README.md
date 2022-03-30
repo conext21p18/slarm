@@ -20,7 +20,7 @@ can be as low as tens of milliseconds. Second, a malicious node can damage the
 SGX timer's accuracy. For instance, although the node cannot tamper with the SGX
 time source (hardware protected) and the time packet contents (transferred via
 the secure channel), the node can still delay the time packets, distorting the
-time for enclave programs (**Figure.2**). We adopted the fine-grained trusted time
+time for enclave programs (**Figure 2**). We adopted the fine-grained trusted time
 architecture of TimeSeal [37] to overcome these two limitations.
 
 SLARM's fine-grained trusted timer is built upon the hardware-protected SGX
@@ -39,11 +39,11 @@ time packets transferred between the SGX time source and the enclave, (2)
 *scheduling attacks* on the two timer threads, and (3) *CPU frequency scaling
 attacks* to reduce the resolution of the counting thread [37].
 
-**Detecting delay attack.** As shown in **Figure.1**, the *timer thread*
+**Detecting delay attack.** As shown in **Figure 1**, the *timer thread*
 continuously pulls the SGX timer; because the SGX timer only provides
 second-level resolution, the timer thread obtains ten repeated timestamps of `0
 sec` (`0_0` ~ `0_9`) before obtaining the first `1 sec` timestamp (`1_0`). If
-the malicious node delays `request_1` and `reply_1` (**Figure.2**), the measured
+the malicious node delays `request_1` and `reply_1` (**Figure 2**), the measured
 period of `0 sec` (`0_0` ~ `0_2`) in SLARM's enclave will be much longer than
 the actual period of SGX timer. As a result, calculates wrong elapsed time for
 SLA transactions.
@@ -68,10 +68,10 @@ Detection of the delay attacks relies on the intuition that the number of
 repeated timestamps per SGX timer tick (second-level) shows large variations
 under delay attacks. Request latency of the API call `sgx_get_trusted_time()` is
 stable without attacks [47], so the number of repeated timestamps also
-concentrates around its mean value. In **Figure.2**, the timer thread only
+concentrates around its mean value. In **Figure 2**, the timer thread only
 obtains three repeated timestamps (`0_0` ~ `0_2`) of `0 sec` under the delay
 attack, much fewer than the expected value (i.e., 10 repeated timestamps of `0
-sec` in **Figure.1**). If the number of repeated timestamps between two adjacent
+sec` in **Figure 1**). If the number of repeated timestamps between two adjacent
 SGX time ticks is fewer than the expected value, a node can determine itself is
 under the delay attack and *kick-outs* itself from SLARM's P2P network. When a
 node ticks-out itself from SLARM's network, the node stops processing all
