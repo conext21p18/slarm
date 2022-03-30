@@ -31,13 +31,13 @@ SGX timer tick. Nodes calculate the fine-grained trusted timestamp `t` by, i.e.,
 *t = SGXticks + current_cpu_cycles/total_cpu_cycles_per_sec*, where *SGXticks* is
 the hardware-protected SGX timer ticks.
 
-## Security Analysis of SLARM's Trusted Timer.
+## Security Analysis of SLARM's Trusted Timer
 
 We now provide a detailed security analysis about how to handle attacks from the
-malicious node. The malicious node can conduct only (1) *delay attacks* on the
-time packets transferred between the SGX time source and the enclave, (2)
-*scheduling attacks* on the two timer threads, and (3) *CPU frequency scaling
-attacks* to reduce the resolution of the counting thread [37].
+adversary (i.e., the malicious node). The malicious node can conduct only (1)
+*delay attacks* on the time packets transferred between the SGX time source and
+the enclave, (2) *scheduling attacks* on the two timer threads, and (3) *CPU
+frequency scaling attacks* to reduce the resolution of the counting thread [37].
 
 **Detecting delay attack.** As shown in **Figure 1**, the *timer thread*
 continuously pulls the SGX timer; because the SGX timer only provides
