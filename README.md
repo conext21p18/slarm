@@ -85,13 +85,21 @@ node schedules out the timer thread (or both of the two threads), the
 repeated timestamps per second will reduce, which is the same as the
 delay attack.
 
-![No delay attacks on the SGX time
-packets.[]{label="subfig:sgxnodelay"}](figures/sgx_nodelay.pdf){#subfig:sgxnodelay
-width="\textwidth"}
+<p align="middle">
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="./figures/sgx_nodelay.png" width="400">
+    <br>
+    <p align="middle"> Figure 1: No delay attacks on the SGX time packets.</p>
+</p>
 
-![Delay attacks on the SGX time
-packets.[]{label="subfig:sgxdelay"}](figures/sgx_delay.pdf){#subfig:sgxdelay
-width="\textwidth"}
+<p align="middle">
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="./figures/sgx_delay.png" width="400">
+    <br>
+    <p align="middle"> Figure 2: Delay attacks on the SGX time packets.</p>
+</p>
 
 **Detecting CPU frequency attack.** A privileged adversary (e.g., the
 malicious host) can manipulate the power management feature of modern
@@ -143,7 +151,7 @@ bandwidth consumption and convergence latency?**
 > To simulate commodity network links, we capped the bandwidth for each blockchain
 > node to 20-30 Mbps, which is the same as Algorand [new 2]. Second, only
 > increasing the nodes' bandwidth cannot significantly improve the SLA
-> satisfaction rate. As shown in **Figure 2** below, we increase the bandwidth
+> satisfaction rate. As shown in **Figure 3** below, we increase the bandwidth
 > of all nodes to 100Mbps, the Ethereum-clique blockchain with five baseline P2P
 > multicast protocols can achieve more stable throughputs under transaction
 > spikes. However, their SLA satisfaction rates are still low. 
@@ -159,7 +167,7 @@ rates and throughputs with large network bandwidth?**
     box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
     src="./figures/evaluation/tps_traffic_spike_Lbwidth.png" width="400">
     <br>
-    <p align="middle"> Figure 2: SLA guarantee for SLA transactions and throughput for all transactions. (100Mbps bandwidth, 5000 nodes).  </p>
+    <p align="middle"> Figure 3: SLA guarantee for SLA transactions and throughput for all transactions. (100Mbps bandwidth, 5000 nodes).  </p>
 </p>
 
 
@@ -188,6 +196,10 @@ the next SLA transaction after all previous transactions have been committed?
 
 <!-- 4. How about only use transactions' timestamp rather than remaining deadline during multicast? -->
 
-# References
+# References in Paper
+[37] Anwar, Fatima M., et al. "Securing Time in Untrusted Operating Systems with TimeSeal." 2019 IEEE Real-Time Systems Symposium (RTSS). IEEE, 2019.
+[47] Liang, Hongliang, et al. "Aurora: Providing trusted system services for enclaves on an untrusted system." arXiv preprint arXiv:1802.03530 (2018).
+
+# New References
 [new 1] https://tinyurl.com/yd8fsfb6  
 [new 2] Algorand: Scaling Byzantine Agreements for Cryptocurrencies, SOSP '17.
