@@ -1,7 +1,8 @@
 # Table of Contents
 - [SLARM's Fine-grained Trusted Timer](#slarms-fine-grained-trusted-timer)
 - [Q&A](#qa)
-- [References](#references)
+- [References in Paper](#references-in-paper)
+- [New References](#new-references)
 
 # SLARM's Fine-grained Trusted Timer
 
@@ -19,18 +20,15 @@ can be as low as tens of milliseconds. Second, a malicious node can damage the
 SGX timer's accuracy. For instance, although the node cannot tamper with the SGX
 time source (hardware protected) and the time packet contents (transferred via
 the secure channel), the node can still delay the time packets, distorting the
-time for enclave programs
-(Fig.[\[fig:sgxtimer\]](#fig:sgxtimer){reference-type="ref"
-reference="fig:sgxtimer"}). We adopted the fine-grained trusted time
+time for enclave programs (**Figure.2**). We adopted the fine-grained trusted time
 architecture of TimeSeal [37] to overcome these two limitations.
 
 SLARM's fine-grained trusted timer is built upon the hardware-protected SGX
 timer. We spawn two timer threads in each node's enclave: a *timer thread*
 continuously pulls the hardware-protected SGX timer ticks (second-level), and a
 *counting thread* incrementing a variable that counts the CPU cycles within each
-SGX timer tick. Nodes calculate the fine-grained trusted timestamp by, i.e., $t
-= \textit{SGXticks} +
-\frac{current\_cpu\_cycles}{total\_cpu\_cycles\_per\_sec}$, where *SGXticks* is
+SGX timer tick. Nodes calculate the fine-grained trusted timestamp `t` by, i.e.,
+*t = SGXticks + current_cpu_cycles/total_cpu_cycles_per_sec*, where *SGXticks* is
 the hardware-protected SGX timer ticks.
 
 ## Security Analysis of SLARM's Trusted Timer.
@@ -41,49 +39,14 @@ time packets transferred between the SGX time source and the enclave, (2)
 *scheduling attacks* on the two timer threads, and (3) *CPU frequency scaling
 attacks* to reduce the resolution of the counting thread [37].
 
-**Detecting delay attack.** As shown in
-Fig.[1](#subfig:sgxnodelay){reference-type="ref" reference="subfig:sgxnodelay"},
-the *timer thread* continuously pulls the SGX timer; because the SGX timer only
-provides second-level resolution, the timer thread obtains ten repeated
-timestamps of $0\,\mathrm{sec}$ ($0_0 \sim 0_9$) before obtaining the first
-$1\,\mathrm{sec}$ timestamp ($1_0$). If the malicious node delays $request_1$
-and $reply_1$ (Fig.[2](#subfig:sgxdelay){reference-type="ref"
-reference="subfig:sgxdelay"}), the measured period of $0\,\mathrm{sec}$ ($0_0
-\sim 0_2$) in SLARM's enclave will be much longer than the actual period of SGX
-timer. As a result, calculates wrong elapsed time for SLA transactions.
-
-Detection of the delay attacks relies on the intuition that the number of
-repeated timestamps per SGX timer tick (second-level) shows large variations
-under delay attacks. Request latency of the API call `sgx_get_trusted_time()` is
-stable without attacks [47], so the number of repeated timestamps also
-concentrates around its mean value. In
-Fig.[2](#subfig:sgxdelay){reference-type="ref" reference="subfig:sgxdelay"}, the
-timer thread only obtains three repeated timestamps ($0_0 \sim 0_2$) of
-$0\,\mathrm{sec}$ under the delay attack, much fewer than the expected value
-(i.e., 10 repeated timestamps of $0\,\mathrm{sec}$ in
-Fig.[1](#subfig:sgxnodelay){reference-type="ref"
-reference="subfig:sgxnodelay"}). If the number of repeated timestamps between
-two adjacent SGX time ticks is fewer than the expected value, a node can
-determine itself is under the delay attack and *kick-outs* itself from SLARM's
-P2P network. When a node ticks-out itself from SLARM's network, the node stops
-processing all incoming messages and multicasts all transactions waiting in the
-transaction queue. Thus, the node's peers can no longer receive any RTT response
-from this node, and drop this node from their peer lists.
-
-**Detecting scheduling attack.** The malicious OS can schedule out the
-*timer thread* and the *counting thread* running in the SGX enclave at
-any instant. We let each node in detect this scheduling attack and
-kick-out itself from 's network when the attacks occur.
-
-If the malicious node schedules out the counting thread, the number of
-counted CPU cycles per SGX timer tick is reduced, making the counting
-thread downgrade the trusted timer's resolution to seconds. If the
-number of counted CPU cycles per second falls below a specified
-threshold (e.g., 1000 CPU cycles per second to provide millisecond-level
-resolution), the node kicks-out itself from 's network. If the malicious
-node schedules out the timer thread (or both of the two threads), the
-repeated timestamps per second will reduce, which is the same as the
-delay attack.
+**Detecting delay attack.** As shown in **Figure.1**, the *timer thread*
+continuously pulls the SGX timer; because the SGX timer only provides
+second-level resolution, the timer thread obtains ten repeated timestamps of `0
+sec` (`0_0` ~ `0_9`) before obtaining the first `1 sec` timestamp (`1_0`). If
+the malicious node delays `request_1` and `reply_1` (**Figure.2**), the measured
+period of `0 sec` (`0_0` ~ `0_2`) in SLARM's enclave will be much longer than
+the actual period of SGX timer. As a result, calculates wrong elapsed time for
+SLA transactions.
 
 <p align="middle">
     <img style="border-radius: 0.3125em;
@@ -101,13 +64,42 @@ delay attack.
     <p align="middle"> Figure 2: Delay attacks on the SGX time packets.</p>
 </p>
 
-**Detecting CPU frequency attack.** A privileged adversary (e.g., the
-malicious host) can manipulate the power management feature of modern
-Intel CPUs and reduce the CPU frequency. As the SGX timer is backed up
-with its own battery, the SGX timer's frequency is not affected by the
-node host's power management [37]. Reducing the CPU
-frequency leads to fewer CPU cycles per second counted by the counting
-thread, achieving the same effect as the scheduling attack on the
+Detection of the delay attacks relies on the intuition that the number of
+repeated timestamps per SGX timer tick (second-level) shows large variations
+under delay attacks. Request latency of the API call `sgx_get_trusted_time()` is
+stable without attacks [47], so the number of repeated timestamps also
+concentrates around its mean value. In **Figure.2**, the timer thread only
+obtains three repeated timestamps (`0_0` ~ `0_2`) of `0 sec` under the delay
+attack, much fewer than the expected value (i.e., 10 repeated timestamps of `0
+sec` in **Figure.1**). If the number of repeated timestamps between two adjacent
+SGX time ticks is fewer than the expected value, a node can determine itself is
+under the delay attack and *kick-outs* itself from SLARM's P2P network. When a
+node ticks-out itself from SLARM's network, the node stops processing all
+incoming messages and multicasts all transactions waiting in the transaction
+queue. Thus, the node's peers can no longer receive any RTT response from this
+node, and drop this node from their peer lists.
+
+**Detecting scheduling attack.** The malicious OS can schedule out the *timer
+thread* and the *counting thread* running in the SGX enclave at any instant. We
+let each node in detect this scheduling attack and kick-out itself from 's
+network when the attacks occur.
+
+If the malicious node schedules out the counting thread, the number of counted
+CPU cycles per SGX timer tick is reduced, making the counting thread downgrade
+the trusted timer's resolution to seconds. If the number of counted CPU cycles
+per second falls below a specified threshold (e.g., 1000 CPU cycles per second
+to provide millisecond-level resolution), the node kicks-out itself from 's
+network. If the malicious node schedules out the timer thread (or both of the
+two threads), the repeated timestamps per second will reduce, which is the same
+as the delay attack.
+
+
+**Detecting CPU frequency attack.** A privileged adversary (e.g., the malicious
+host) can manipulate the power management feature of modern Intel CPUs and
+reduce the CPU frequency. As the SGX timer is backed up with its own battery,
+the SGX timer's frequency is not affected by the node host's power management
+[37]. Reducing the CPU frequency leads to fewer CPU cycles per second counted by
+the counting thread, achieving the same effect as the scheduling attack on the
 counting thread.
 
 Overall, by adopting the fine-grained trusted timer of TimeSeal [37], SLARM can
@@ -171,7 +163,7 @@ rates and throughputs with large network bandwidth?**
 </p>
 
 
-> **Figure 2:** SLA guarantees for SLA transactions and throughputs for all
+> **Figure 3:** SLA guarantees for SLA transactions and throughputs for all
 >transactions of the online trading application. 
 >
 > **New setting:** 100Mbps bandwidth, 5000 nodes.
